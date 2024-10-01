@@ -93,6 +93,8 @@ public:
 
     // Ends the game and performs necessary cleanup
     void endGame();
+
+    void buildHouseOnProperty(Player& player);
 };
 
 #endif // GAME_HPP

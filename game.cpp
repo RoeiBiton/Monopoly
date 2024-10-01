@@ -64,9 +64,12 @@ void Game::startGame() {
 void Game::playTurn() {
     Player& currentPlayer = players[currentPlayerIndex];
     if(currentPlayer.getActive()){
+        GUIShowMessage("Its " + currentPlayer.getName() + " turn!");
+
+        buildHouseOnProperty(currentPlayer);
         if(!currentPlayer.isFreeParkedStatus()){
         std::cout << currentPlayer.getName() << "'s turn!\n";
-         GUIShowMessage("Its " + currentPlayer.getName() + " turn!");
+
 
 
          handleJailCard(currentPlayer);     //check if prisoner and have a card and want to exit
@@ -144,11 +147,20 @@ void Game::playTurn() {
 bool Game::isGameOver() {
     int counter = 0;
     for (Player& player : this->players){
+        if(player.getMoneyBalance()>=4000){
+            GUIShowMessage(player.getName() + " Won the game !");
+             gameEnded=true;
+        }
         if(player.getActive()){
             counter++;
         }
     }
     if(counter==1){
+        for (Player& wonPlayer : this->players){
+            if(wonPlayer.getActive()){
+               GUIShowMessage(wonPlayer.getName() + " Won the game !");
+            }
+        }
         gameEnded=true;
     }
     return gameEnded;
@@ -466,7 +478,13 @@ void Game::handlePropertyDevelopement(Player& player, Property* property, int ne
                     GUIhouseCreate(newPosition, property->getHouseAmount());
                 }
             }
+        }else if(!board.ownTheCity(property, player.getId())){
+            GUIShowMessage("You must own all the city first !");
+        }else if(board.sameOrLessAmountOfHouses(property)){
+            GUIShowMessage("You must have a same or less amount of houses than the rest of the city streets !");
         }
+    } else{
+        GUIShowMessage("You can build houses only in streets !");
     }
 }
 /**
@@ -619,11 +637,11 @@ void Game::GUIupdatePlayerPosition(const Player& player) {
  */
 int Game::calculateXPosition(int playerId, int position) {
     if (position < 10) {  // Bottom row (0-9)
-        return 707 - (position * 65) - ((playerId - 1) * 4); // Moving left from the bottom right
+        return 707 - (position * 65) - ((playerId - 1) * 2); // Moving left from the bottom right
     } else if (position < 20) {  // Left column (10-19)
         return 10; // Fixed X for the left column
     } else if (position < 30) {  // Top row (20-29)
-        return 65 + (position - 20) * 65 + ((playerId - 1) * 4); // Moving right from the top left
+        return 65 + (position - 20) * 65 + ((playerId - 1) * 2); // Moving right from the top left
     } else {  // Right column (30-39)
         return 760; // Fixed X for the right column
     }
@@ -641,11 +659,11 @@ int Game::calculateYPosition(int playerId, int position) {
     if (position < 10) {  // Bottom row (0-9)
         return 780; // Fixed Y for the bottom row
     } else if (position < 20) {  // Left column (10-19)
-        return 716 - ((position - 10) * 65) - ((playerId - 1) * 4); // Moving up from the bottom right
+        return 716 - ((position - 10) * 65) - ((playerId - 1) * 2); // Moving up from the bottom right
     } else if (position < 30) {  // Top row (20-29)
         return 10; // Fixed Y for the top row
     } else {  // Left column (30-39)
-        return 60 + (position - 30) * 65 + ((playerId - 1) * 4); // Moving down from the top right
+        return 60 + (position - 30) * 65 + ((playerId - 1) * 2); // Moving down from the top right
     }
 }
 
@@ -744,5 +762,58 @@ int Game::calculateHouseYPosition(int position, int houseNum) {
         return 50 + (position - 30) * 65 + ((houseNum-1)*8); // Moving down from the top right
     }
 }
+
+/**
+ * Prompts the player to build a house on one of their owned properties.
+ * Displays a list of owned properties for the player to choose from.
+ *
+ * @param player The player who wants to build a house.
+ */
+void Game::buildHouseOnProperty(Player& player) {
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(nullptr, "Buy House",
+                                  QString("%1 Do you want to buy a house?")
+                                          .arg(QString::fromStdString(player.getName())),
+                                  QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+
+
+    QStringList propertiesToBuild; // List to store property names for dialog
+    std::vector<int> ownedProperties = player.getOwnedProperties();
+
+    // Collect property names
+    for (int propertyId : ownedProperties) {
+        Property* property = board.getPropertyById(propertyId); // Get property by ID
+        if (property && property->getHouseAmount() < 5) { // Check if the player can build a house
+            propertiesToBuild << QString::fromStdString(property->getCity() + " " + property->getStreet());
+        }
+    }
+
+    if (propertiesToBuild.isEmpty()) {
+        GUIShowMessage("You have no properties !");
+        return;
+    }
+
+    // Ask the player to select a property to build a house on
+    bool ok;
+    QString selectedProperty = QInputDialog::getItem(nullptr, "Select Property to Build House",
+                                                     "Select one:",
+                                                     propertiesToBuild, 0, false, &ok);
+
+    if (ok && !selectedProperty.isEmpty()) {
+        // Find the property ID based on the selected name
+        for (int propertyId : ownedProperties) {
+            Property* property = board.getPropertyById(propertyId);
+            if (property && selectedProperty == QString::fromStdString(property->getCity() + " " + property->getStreet())) {
+              handlePropertyDevelopement(player, property, property->getPosition());
+                break; // Exit loop after finding and building the house
+            }
+        }
+    }
+    }
+}
+
 
 

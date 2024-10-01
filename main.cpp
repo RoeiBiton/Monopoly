@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
     // Ask the user for the number of players
     bool ok;
     int playerCount = QInputDialog::getInt(nullptr, "Number of Players",
-                                           "How many players will be playing? (1-4)",
-                                           2, 2, 4, 1, &ok); // Default to 2 players
+                                           "How many players will be playing? (2-8)",
+                                           2, 2, 8, 1, &ok); // Default to 2 players
 
     if (!ok) {
         // User cancelled the dialog
