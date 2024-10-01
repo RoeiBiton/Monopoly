@@ -5,9 +5,9 @@
 #include <vector>
 #include <QInputDialog>
 #include <QMessageBox>
-#include <QDebug> // Include QDebug for debugging messages
+#include <QDebug>
 #include "game.hpp"
-#include "player.hpp" // Ensure you have this include for Player class
+#include "player.hpp"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
@@ -39,11 +39,9 @@ int main(int argc, char *argv[]) {
             return 1; // Exit if the input is invalid
         }
     }
-    //////////////////////
-    /// \brief MAX_LOGO_WIDTH
-    ///    // Define the size of the board
-    const int BOARD_WIDTH = 800;  // Set your desired board width
-    const int BOARD_HEIGHT = 800; // Set your desired board height
+  // Define the size of the board
+    const int BOARD_WIDTH = 800;  // Set board width
+    const int BOARD_HEIGHT = 800; // Set board height
 
     // Create the Game object
     Game game(players, &scene);
@@ -54,7 +52,7 @@ int main(int argc, char *argv[]) {
     view.setWindowTitle("Monopoly Game");
 
     // Load and display the Monopoly board image
-    QPixmap boardImage("/Users/roeibiton/QtProjects/Monopoly/monopoly_board.jpg"); // Replace with the path to your board image
+    QPixmap boardImage("/Users/roeibiton/QtProjects/Monopoly/monopoly_board.jpg");
     boardImage = boardImage.scaled(BOARD_WIDTH, BOARD_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     scene.addPixmap(boardImage); // Add the board image to the scene
 
