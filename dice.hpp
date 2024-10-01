@@ -10,7 +10,7 @@ class Dice
         //Constructor
         Dice();
 
-        //functions to get values
+        //function to get value
         int rollDice();
 
     };

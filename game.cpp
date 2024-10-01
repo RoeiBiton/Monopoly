@@ -7,6 +7,12 @@
 #include <QGraphicsPixmapItem>
 #include "card.hpp"
 
+/**
+ * Constructs a Game instance with the provided players and graphics scene.
+ *
+ * @param players A vector of Player objects participating in the game.
+ * @param scene The QGraphicsScene where the game will be displayed.
+ */
 Game::Game(const std::vector<Player>& players, QGraphicsScene* scene)
     : players(players), currentPlayerIndex(0), gameEnded(false), houseIcons(200, nullptr), scene(scene) {
 
@@ -17,7 +23,7 @@ Game::Game(const std::vector<Player>& players, QGraphicsScene* scene)
 
     for (size_t i = 0; i < players.size(); ++i) {
         // Load logos for each player
-        QString logoPath = "/Users/roeibiton/QtProjects/Monopoly/player" + QString::number(i + 1) + "_logo.jpg";
+        QString logoPath = "/Users/roeibiton/QtProjects/Monopoly/player" + QString::number(i + 1) + "_logo.png";
         QPixmap logoPixmap(logoPath);
 
         if (logoPixmap.isNull()) {
@@ -41,6 +47,9 @@ Game::Game(const std::vector<Player>& players, QGraphicsScene* scene)
 }
 
 
+/**
+ * Starts the game loop, allowing players to take turns until the game ends.
+ */
 void Game::startGame() {
     while (!gameEnded) {
         playTurn();
@@ -48,6 +57,10 @@ void Game::startGame() {
     }
 }
 
+/**
+ * Manages a single turn for the current player, including rolling dice,
+ * moving, and handling various game events.
+ */
 void Game::playTurn() {
     Player& currentPlayer = players[currentPlayerIndex];
     if(currentPlayer.getActive()){
@@ -55,8 +68,8 @@ void Game::playTurn() {
         std::cout << currentPlayer.getName() << "'s turn!\n";
          GUIShowMessage("Its " + currentPlayer.getName() + " turn!");
 
-        //check if prisoner and have a card and want to exit
-         handleJailCard(currentPlayer);
+
+         handleJailCard(currentPlayer);     //check if prisoner and have a card and want to exit
 
         GUIShowMessage(currentPlayer.getName() + ", Please throw the dices.");
 
@@ -123,6 +136,11 @@ void Game::playTurn() {
     }
 }
 
+/**
+ * Checks if the game is over, meaning only one player remains active.
+ *
+ * @return True if the game has ended; otherwise, false.
+ */
 bool Game::isGameOver() {
     int counter = 0;
     for (Player& player : this->players){
@@ -136,10 +154,21 @@ bool Game::isGameOver() {
     return gameEnded;
 }
 
+/**
+ * Ends the game.
+ */
 void Game::endGame() {
     gameEnded = true;
 }
 
+/**
+ * Handles a player landing on a tile, including passing Derech Zleha, purchasing properties,
+ * paying rent, or drawing cards.
+ *
+ * @param player The player who has landed on the tile.
+ * @param newPosition The new position of the player on the board.
+ * @param diceResult The total result of the dice roll.
+ */
 void Game::handleTile(Player& player, int newPosition, int diceResult) {
 
     if(player.getPlaceOnBoard() > newPosition){
@@ -212,19 +241,20 @@ void Game::handleTile(Player& player, int newPosition, int diceResult) {
 }
 }
 
-
-
-
-
-
+/**
+ * Allows a player to sell (mortgage) properties they own to raise money.
+ * Displays a dialog for the player to select which property to mortgage.
+ *
+ * @param player The player who wants to mortgage their properties.
+ */
 void Game::sellProperties(Player& player) {
     QStringList propertiesToMortgage; // List to store property names for dialog
     std::vector<int> ownedProperties = player.getOwnedProperties();
 
     // Collect property names
     for (int propertyId : ownedProperties) {
-        if (!player.getOwnedProperties().empty()) { // Assuming -1 indicates property is not owned
-            Property* property = board.getPropertyById(propertyId); // Assume you have a method to get property by ID
+        if (!player.getOwnedProperties().empty()) { // Check if the player has properties
+            Property* property = board.getPropertyById(propertyId); // Get property by ID
             if (property) {
                 propertiesToMortgage << QString::fromStdString(property->getCity() + " " + property->getStreet());
             }
@@ -251,11 +281,10 @@ void Game::sellProperties(Player& player) {
                 /////////
                 GUIdeleteHouses(propertyPos);
                 //////////////
-                if(propertyPos==5 || propertyPos==15 || propertyPos==25 || propertyPos==35){
+                if (propertyPos == 5 || propertyPos == 15 || propertyPos == 25 || propertyPos == 35) {
                     player.decTrainCounter();
                     updateAllTrainRent(player.getId(), player.getTrainCounter());
                 }
-
 
                 // Inform the player
                 QMessageBox::information(nullptr, "Property Mortgaged",
@@ -268,26 +297,49 @@ void Game::sellProperties(Player& player) {
     }
 }
 
-void Game::buyHouse(Property* property, Player& player){
+/**
+ * Allows a player to buy a house for a property, deducting the cost from their balance.
+ *
+ * @param property The property for which the house is being purchased.
+ * @param player The player who is buying the house.
+ */
+void Game::buyHouse(Property* property, Player& player) {
     player.payToBank(property->getHousePrice());
     property->buildHouse();
-    ///implement by amount of houses and set actual rent
-
 }
-void Game::buyHotel(Property* property, Player& player){
-    player.payToBank((property->getHousePrice()*4) + 100);
+
+/**
+ * Allows a player to buy a hotel for a property, deducting the cost from their balance.
+ *
+ * @param property The property for which the hotel is being purchased.
+ * @param player The player who is buying the hotel.
+ */
+void Game::buyHotel(Property* property, Player& player) {
+    player.payToBank((property->getHousePrice() * 4) + 100);
     property->buildHouse();
-    ///implement by amount of houses and set actual rent
-
+    /// Implement by amount of houses and set actual rent
 }
-void Game::updateAllTrainRent(int playerId, int trainCounter){
-    ////////////CHECK FUNC !!!
+
+/**
+ * Updates the rent values for all train properties owned by a player.
+ *
+ * @param playerId The ID of the player whose train properties are being updated.
+ * @param trainCounter The number of train properties owned by the player.
+ */
+void Game::updateAllTrainRent(int playerId, int trainCounter) {
     board.getPropertyAtPosition(5)->updateTrainRent(playerId, trainCounter);
     board.getPropertyAtPosition(15)->updateTrainRent(playerId, trainCounter);
     board.getPropertyAtPosition(25)->updateTrainRent(playerId, trainCounter);
     board.getPropertyAtPosition(35)->updateTrainRent(playerId, trainCounter);
 }
 
+/**
+ * Handles the payment of rent when a player lands on a property owned by another player.
+ *
+ * @param player The player who is paying rent.
+ * @param property The property for which rent is being paid.
+ * @param diceResult The result of the dice roll used to determine rent calculation to Hevrat Hashmal and Hevrat Hamaim.
+ */
 void Game::handleRentPayment(Player& player, Property* property, int diceResult) {
     int ownerId = property->getOwner();
     int rent = property->getRent();
@@ -313,7 +365,7 @@ void Game::handleRentPayment(Player& player, Property* property, int diceResult)
                 player.payToPlayer(players[ownerId], player.getMoneyBalance());
                 player.setOutOfTheGame();
                 QGraphicsPixmapItem* playerIcon = playerIcons[player.getId()];
-                playerIcon->setPos(400+player.getId()*5, 400);
+                playerIcon->setPos(400 + player.getId() * 5, 400);
                 GUIShowMessage("You have no more properties to sell and not enough money to pay. You are out of the game.");
                 isPaid = true;
             } else {
@@ -326,89 +378,105 @@ void Game::handleRentPayment(Player& player, Property* property, int diceResult)
     }
 }
 
-
-void Game::handlePropertyPurchase(Player& player, Property* property, int newPosition){
+/**
+ * Handles the purchase of a property by a player, confirming the purchase through a dialog.
+ *
+ * @param player The player who wants to buy the property.
+ * @param property The property being purchased.
+ * @param newPosition The position of the property on the board.
+ */
+void Game::handlePropertyPurchase(Player& player, Property* property, int newPosition) {
     int propertyPrice = property->getPropertyPrice();
-    if(player.getMoneyBalance()>=propertyPrice){
-    // Create a confirmation dialog
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(nullptr, "Buy Property",
-                                  QString::fromStdString(player.getName()) + " can buy " +
-                                      QString::fromStdString(property->getCity() +" " + property->getStreet()) +
-                                      " for $" + QString::number(propertyPrice) + ".\nDo you want to buy it? \nYour money balance now is: " + QString::number(player.getMoneyBalance()),
-                                  QMessageBox::Yes | QMessageBox::No);
+    if (player.getMoneyBalance() >= propertyPrice) {
+        // Create a confirmation dialog
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(nullptr, "Buy Property",
+                                      QString::fromStdString(player.getName()) + " can buy " +
+                                          QString::fromStdString(property->getCity() + " " + property->getStreet()) +
+                                          " for $" + QString::number(propertyPrice) + ".\nDo you want to buy it? \nYour money balance now is: " + QString::number(player.getMoneyBalance()),
+                                      QMessageBox::Yes | QMessageBox::No);
 
-    if (reply == QMessageBox::Yes) {
-        if (player.getMoneyBalance() >= propertyPrice) {
-            // Proceed with buying the property
-            player.payToBank(propertyPrice);
-            property->setOwner(player.getId());
-            player.buyProperty(property->getId());
-            if(newPosition==5 || newPosition==15 || newPosition==25 || newPosition==35){
-                player.incTrainCounter();
-                updateAllTrainRent(player.getId(), player.getTrainCounter());
+        if (reply == QMessageBox::Yes) {
+            if (player.getMoneyBalance() >= propertyPrice) {
+                // Proceed with buying the property
+                player.payToBank(propertyPrice);
+                property->setOwner(player.getId());
+                player.buyProperty(property->getId());
+                if (newPosition == 5 || newPosition == 15 || newPosition == 25 || newPosition == 35) {
+                    player.incTrainCounter();
+                    updateAllTrainRent(player.getId(), player.getTrainCounter());
+                }
+
+                QMessageBox::information(nullptr, "Purchase Successful",
+                                         QString::fromStdString(player.getName()) + " bought " +
+                                             QString::fromStdString(property->getStreet()) + "!");
+            } else {
+                QMessageBox::warning(nullptr, "Insufficient Funds",
+                                     QString::fromStdString(player.getName()) + " does not have enough money to buy " +
+                                         QString::fromStdString(property->getStreet()) + ".");
             }
-
-
-            QMessageBox::information(nullptr, "Purchase Successful",
-                                     QString::fromStdString(player.getName()) + " bought " +
-                                         QString::fromStdString(property->getStreet()) + "!");
         } else {
-            QMessageBox::warning(nullptr, "Insufficient Funds",
-                                 QString::fromStdString(player.getName()) + " does not have enough money to buy " +
-                                     QString::fromStdString(property->getStreet()) + ".");
+            QMessageBox::information(nullptr, "Purchase Cancelled",
+                                     QString::fromStdString(player.getName()) + " decided not to buy " +
+                                         QString::fromStdString(property->getStreet()) + ".");
         }
-    } else {
-        QMessageBox::information(nullptr, "Purchase Cancelled",
-                                 QString::fromStdString(player.getName()) + " decided not to buy " +
-                                     QString::fromStdString(property->getStreet()) + ".");
-    }
     }
 }
 
-
-
-void Game::handlePropertyDevelopement(Player& player, Property* property, int newPosition){
-    if(newPosition != 5 && newPosition != 15 && newPosition != 25 && newPosition != 35 && newPosition != 12 && newPosition != 28) {
-        if(board.ownTheCity(property, player.getId()) && board.sameOrLessAmountOfHouses(property) && player.getMoneyBalance() >= property->getHousePrice()) {
-            if(property->getHouseAmount() < 4) {
+/**
+ * Handles the development of a property by allowing a player to buy houses or hotels.
+ *
+ * @param player The player who wants to develop the property.
+ * @param property The property being developed.
+ * @param newPosition The position of the property on the board.
+ */
+void Game::handlePropertyDevelopement(Player& player, Property* property, int newPosition) {
+    if (newPosition != 5 && newPosition != 15 && newPosition != 25 && newPosition != 35 && newPosition != 12 && newPosition != 28) {
+        if (board.ownTheCity(property, player.getId()) && board.sameOrLessAmountOfHouses(property) && player.getMoneyBalance() >= property->getHousePrice()) {
+            if (property->getHouseAmount() < 4) {
                 // Ask if the player wants to buy a house
                 QMessageBox::StandardButton reply;
                 reply = QMessageBox::question(nullptr, "Buy House",
                                               QString("%1 Do you want to buy a house on %2, %3 for %4? your money balance now is: %5")
                                                   .arg(QString::fromStdString(player.getName()),
-                                                  QString::fromStdString(property->getCity()),
+                                                       QString::fromStdString(property->getCity()),
                                                        QString::fromStdString(property->getStreet()),
                                                        QString::number(property->getHousePrice()),
-                                                        QString::number(player.getMoneyBalance())),
-                                              QMessageBox::Yes|QMessageBox::No);
+                                                       QString::number(player.getMoneyBalance())),
+                                              QMessageBox::Yes | QMessageBox::No);
 
-                if(reply == QMessageBox::Yes) {
+                if (reply == QMessageBox::Yes) {
                     buyHouse(property, player);
                     GUIhouseCreate(newPosition, property->getHouseAmount());
                 }
 
-            } else if(property->getHouseAmount() == 4 && player.getMoneyBalance() >= (4 * property->getHousePrice() + 100)) {
+            } else if (property->getHouseAmount() == 4 && player.getMoneyBalance() >= (4 * property->getHousePrice() + 100)) {
                 // Ask if the player wants to buy a hotel
                 QMessageBox::StandardButton reply;
                 reply = QMessageBox::question(nullptr, "Buy Hotel",
                                               QString("Do you want to buy a hotel on %1, %2 for %4? your money balance now is: %3")
                                                   .arg(QString::fromStdString(property->getCity()),
                                                        QString::fromStdString(property->getStreet()),
-                                                        QString::number(player.getMoneyBalance()),
+                                                       QString::number(player.getMoneyBalance()),
                                                        QString::number(4 * property->getHousePrice() + 100)),
-                                              QMessageBox::Yes|QMessageBox::No);
+                                              QMessageBox::Yes | QMessageBox::No);
 
-                if(reply == QMessageBox::Yes) {
+                if (reply == QMessageBox::Yes) {
                     buyHotel(property, player);
-                     GUIhouseCreate(newPosition, property->getHouseAmount());
+                    GUIhouseCreate(newPosition, property->getHouseAmount());
                 }
             }
         }
     }
 }
-
-void Game::chargeTax(Player& player, int amount){
+/**
+ * Charges a tax amount to a player. The player pays the tax if they have enough money;
+ * otherwise, they may need to mortgage properties or declare bankruptcy if they have none.
+ *
+ * @param player The player who is paying the tax.
+ * @param amount The amount of tax to be paid.
+ */
+void Game::chargeTax(Player& player, int amount) {
     bool isPaid = false;
     while (!isPaid) {
         if (player.getMoneyBalance() >= amount) {
@@ -422,9 +490,8 @@ void Game::chargeTax(Player& player, int amount){
                 player.payToBank(player.getMoneyBalance());
                 player.setOutOfTheGame();
                 QGraphicsPixmapItem* playerIcon = playerIcons[player.getId()];
-                playerIcon->setPos(400+player.getId()*5, 400);
+                playerIcon->setPos(400 + player.getId() * 5, 400);
                 GUIShowMessage("You have no more properties to sell and not enough money to pay. You are out of the game.");
-
                 isPaid = true;
             } else {
                 QMessageBox::warning(nullptr, "Insufficient Funds",
@@ -436,16 +503,27 @@ void Game::chargeTax(Player& player, int amount){
     }
 }
 
-void Game::GUIShowMessage(std::string message){
+/**
+ * Displays a message to the user using a message box.
+ *
+ * @param message The message to be displayed.
+ */
+void Game::GUIShowMessage(std::string message) {
     QMessageBox::information(nullptr, "Message",
                              QString::fromStdString(message));
-
 }
 
-void Game::takeChanceCard(Player& player, int newPosition, int diceResult){
+/**
+ * Handles drawing a Chance card for a player, performing the appropriate action based on the card type.
+ *
+ * @param player The player drawing the Chance card.
+ * @param newPosition The new position of the player after drawing the card.
+ * @param diceResult The result of the dice roll that led to this action.
+ */
+void Game::takeChanceCard(Player& player, int newPosition, int diceResult) {
     Card card = board.drawChanceCard();
     GUIShowMessage(card.getDescription());
-    switch(card.getType()){
+    switch (card.getType()) {
     case 'c':
         player.collectMoney(card.getValue());
         board.pushChanceCard(card);
@@ -465,13 +543,19 @@ void Game::takeChanceCard(Player& player, int newPosition, int diceResult){
         player.setJailCard(true);
         break;
     }
-
 }
 
-void Game::takeCommunityChestCard(Player& player, int newPosition, int diceResult){
+/**
+ * Handles drawing a Community Chest card for a player, performing the appropriate action based on the card type.
+ *
+ * @param player The player drawing the Community Chest card.
+ * @param newPosition The new position of the player after drawing the card.
+ * @param diceResult The result of the dice roll that led to this action.
+ */
+void Game::takeCommunityChestCard(Player& player, int newPosition, int diceResult) {
     Card card = board.drawCommunityChestCard();
     GUIShowMessage(card.getDescription());
-    switch(card.getType()){
+    switch (card.getType()) {
     case 'c':
         player.collectMoney(card.getValue());
         board.pushCommunityChestCard(card);
@@ -486,31 +570,37 @@ void Game::takeCommunityChestCard(Player& player, int newPosition, int diceResul
         handleTile(player, card.getValue(), diceResult);
         board.pushCommunityChestCard(card);
         break;
-
     }
-
 }
 
-void Game::handleJailCard(Player& player){
-    if(player.isInPrison() && player.hasExitJailCard()){
+/**
+ * Handles the use of a Jail card for a player, allowing them to exit jail if they have a Jail card.
+ *
+ * @param player The player considering using their Jail card.
+ */
+void Game::handleJailCard(Player& player) {
+    if (player.isInPrison() && player.hasExitJailCard()) {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(nullptr, "Jail Card",
-                                      QString("%1 Do you want to use you Jail Card and exit from the jail?")
+                                      QString("%1 Do you want to use your Jail Card and exit from the jail?")
                                           .arg(QString::fromStdString(player.getName())),
-                                      QMessageBox::Yes|QMessageBox::No);
+                                      QMessageBox::Yes | QMessageBox::No);
 
-        if(reply == QMessageBox::Yes) {
+        if (reply == QMessageBox::Yes) {
             player.setJailCard(false);
             player.setIfPrisoner(false);
             player.resetJailTurn();
-            Card card(4, "Get out of the jail ticket, keep it for when you will need it !", 0, 'j');
+            Card card(4, "Get out of the jail ticket, keep it for when you will need it!", 0, 'j');
             board.pushChanceCard(card);
         }
-
     }
 }
 
-
+/**
+ * Updates the GUI to reflect a player's new position on the board.
+ *
+ * @param player The player whose position is being updated.
+ */
 void Game::GUIupdatePlayerPosition(const Player& player) {
     QGraphicsPixmapItem* playerIcon = playerIcons[player.getId()];
     // Calculate the new position on the board based on player.getPlaceOnBoard()
@@ -519,37 +609,57 @@ void Game::GUIupdatePlayerPosition(const Player& player) {
 
     playerIcon->setPos(x, y);
 }
-
+/**
+ * Calculates the X position on the GUI for a player based on their ID and current position on the board.
+ * The first tile is at the bottom right (position 0).
+ *
+ * @param playerId The ID of the player.
+ * @param position The current position of the player on the board.
+ * @return The calculated X coordinate for the player on the GUI.
+ */
 int Game::calculateXPosition(int playerId, int position) {
-    // The first tile is at the bottom right (position 0).
     if (position < 10) {  // Bottom row (0-9)
-        return 707 - (position * 65) - ((playerId-1)*4); // Moving left from the bottom right
+        return 707 - (position * 65) - ((playerId - 1) * 4); // Moving left from the bottom right
     } else if (position < 20) {  // Left column (10-19)
-        return 10; // Fixed X for the right column
+        return 10; // Fixed X for the left column
     } else if (position < 30) {  // Top row (20-29)
-        return 65 +(position - 20) * 65 + ((playerId-1)*4); // Moving right from the top left
+        return 65 + (position - 20) * 65 + ((playerId - 1) * 4); // Moving right from the top left
     } else {  // Right column (30-39)
         return 760; // Fixed X for the right column
     }
 }
 
+/**
+ * Calculates the Y position on the GUI for a player based on their ID and current position on the board.
+ * The first tile is at the bottom right (position 0).
+ *
+ * @param playerId The ID of the player.
+ * @param position The current position of the player on the board.
+ * @return The calculated Y coordinate for the player on the GUI.
+ */
 int Game::calculateYPosition(int playerId, int position) {
-    // The first tile is at the bottom right (position 0).
     if (position < 10) {  // Bottom row (0-9)
         return 780; // Fixed Y for the bottom row
     } else if (position < 20) {  // Left column (10-19)
-        return 716 - ((position - 10) * 65 - ((playerId-1)*4)); // Moving up from the bottom right
+        return 716 - ((position - 10) * 65) - ((playerId - 1) * 4); // Moving up from the bottom right
     } else if (position < 30) {  // Top row (20-29)
         return 10; // Fixed Y for the top row
     } else {  // Left column (30-39)
-        return 60 + (position - 30) * 65 + ((playerId-1)*4); // Moving down from the top right
+        return 60 + (position - 30) * 65 + ((playerId - 1) * 4); // Moving down from the top right
     }
 }
 
-void Game::GUIhouseCreate(int position, int houseNum){
-    QString logoPath = "/Users/roeibiton/QtProjects/Monopoly/house_logo.png";
-    if(houseNum==5){
-        logoPath = "/Users/roeibiton/QtProjects/Monopoly/hotel_logo.png";
+/**
+ * Creates a house icon on the GUI for a specific property position.
+ * It loads the appropriate logo based on the number of houses (or a hotel), scales it, and adds it to the scene.
+ *
+ * @param position The position on the board where the house is being created.
+ * @param houseNum The number of houses (1-4) or 5 for a hotel.
+ */
+void Game::GUIhouseCreate(int position, int houseNum) {
+    QString logoPath = "/Users/roeibiton/QtProjects/Monopoly/house_logo.png"; // Default house logo path
+    if (houseNum == 5) {
+        logoPath = "/Users/roeibiton/QtProjects/Monopoly/hotel_logo.png"; // Path to hotel logo if 5 houses
     }
     QPixmap logoPixmap(logoPath);
 
@@ -567,17 +677,23 @@ void Game::GUIhouseCreate(int position, int houseNum){
     // Create a QGraphicsPixmapItem for the player logo and add it to the scene
     QGraphicsPixmapItem* houseIcon = scene->addPixmap(logoPixmap);
     houseIcon->setZValue(1); // Ensure logos are on top
-    houseIcons[(position*5)+houseNum-1]=houseIcon; // Store the icon in the vector
+    houseIcons[(position * 5) + houseNum - 1] = houseIcon; // Store the icon in the vector
     int x = calculateHouseXPosition(position, houseNum);
     int y = calculateHouseYPosition(position, houseNum);
     // Set the position for the player logo on the board
     houseIcon->setPos(x, y);
 }
 
-void Game::GUIdeleteHouses(int position){
+/**
+ * Deletes house icons from the GUI for a specific property position.
+ * It removes and frees memory for up to five house icons at the given position.
+ *
+ * @param position The position on the board where the houses are being deleted.
+ */
+void Game::GUIdeleteHouses(int position) {
     int startIndex = position * 5;
 
-    for(int index = startIndex; index<startIndex+5; ++index){
+    for (int index = startIndex; index < startIndex + 5; ++index) {
         QGraphicsPixmapItem* houseIcon = houseIcons[index];
 
         if (houseIcon) {
@@ -588,20 +704,34 @@ void Game::GUIdeleteHouses(int position){
     }
 }
 
-
+/**
+ * Calculates the X position on the GUI for a house based on the property position and house number.
+ * The first tile is at the bottom right (position 0).
+ *
+ * @param position The position of the property on the board.
+ * @param houseNum The number of the house (1-5).
+ * @return The calculated X coordinate for the house on the GUI.
+ */
 int Game::calculateHouseXPosition(int position, int houseNum) {
-    // The first tile is at the bottom right (position 0).
     if (position < 10) {  // Bottom row (0-9)
-        return 697 - (position * 65) + ((houseNum-1)*8); // Moving left from the bottom right
+        return 697 - (position * 65) + ((houseNum - 1) * 8); // Moving left from the bottom right
     } else if (position < 20) {  // Left column (10-19)
-        return 22; // Fixed X for the right column
+        return 22; // Fixed X for the left column
     } else if (position < 30) {  // Top row (20-29)
-        return 48 +(position - 20) * 65 + ((houseNum-1)*8); // Moving right from the top left
+        return 48 + (position - 20) * 65 + ((houseNum - 1) * 8); // Moving right from the top left
     } else {  // Right column (30-39)
         return 770; // Fixed X for the right column
     }
 }
 
+/**
+ * Calculates the Y position on the GUI for a house based on the property position and house number.
+ * The first tile is at the bottom right (position 0).
+ *
+ * @param position The position of the property on the board.
+ * @param houseNum The number of the house (1-5).
+ * @return The calculated Y coordinate for the house on the GUI.
+ */
 int Game::calculateHouseYPosition(int position, int houseNum) {
     // The first tile is at the bottom right (position 0).
     if (position < 10) {  // Bottom row (0-9)
