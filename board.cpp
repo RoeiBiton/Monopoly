@@ -1,5 +1,6 @@
 #include "board.hpp"
 #include "property.hpp"
+#include "card.hpp"
 #include <cstdlib>
 
 // Define the properties based on the standard Monopoly board
@@ -44,13 +45,20 @@ Board::Board() {
 
 
     // Initialize Chance cards
-    chanceCards.push_back(Card(1, "Advance to Go (Collect $200)", 200));
-    chanceCards.push_back(Card(2, "Go to Jail", -1));
+    chanceCards.push(Card(0, "Congratulations for your birthday ! you got a gift of 100 Shekels !", 100, 'c'));
+    chanceCards.push(Card(1, "Congratulations for your son birth ! you got a gift of 100 Shekels !", 100, 'c'));
+    chanceCards.push(Card(2, "You got a ticket for speeding ! pay 150 Shekels !", 150, 'p'));
+    chanceCards.push(Card(3, "Go to Kiryat Shemona Havradim, if you go through Derech Zleha, take 200 Shekels", 31, 'g'));
+    chanceCards.push(Card(4, "Get out of the jail ticket, keep it for when you will need it !", 0, 'j'));
+
     // ... (other Chance cards)
 
     // Initialize Community Chest cards
-    communityChestCards.push_back(Card(1, "Advance to Go (Collect $200)", 200));
-    communityChestCards.push_back(Card(2, "Get Out of Jail Free", 0));
+    communityChestCards.push(Card(0, "Congratulations for your Holiday ! you got a gift of 150 Shekels from Grandmother !", 150, 'c'));
+    communityChestCards.push(Card(1, "You got a haircut ! pay for your Barber 50 Shekels !", 50, 'p'));
+    communityChestCards.push(Card(2, "You got your wife nervous, pay 180 for flowers !", 180, 'p'));
+    communityChestCards.push(Card(3, "Today there is a football game ! Go for the Darma Pub !", 35, 'g'));
+    communityChestCards.push(Card(4, "Your friends are waiting for you at the lake ! Go to Dafna Tayelet Hanahal", 19, 'g'));
     // ... (other Community Chest cards)
 }
 
@@ -73,19 +81,28 @@ Property* Board::getPropertyById(int id) {
 }
 
 Card Board::drawChanceCard() {
-    // Implement logic to draw a Chance card (randomly, for example)
-    int index = arc4random() % chanceCards.size();
-    Card card = chanceCards[index];
-    chanceCards.erase(chanceCards.begin() + index); // Remove drawn card from deck
-    return card;
+
+    Card drawnCard = chanceCards.front();
+    chanceCards.pop();  // Remove the card from the queue
+    return drawnCard;  // Return the drawn card
+
+}
+
+void Board::pushChanceCard(Card& card) {
+    chanceCards.push(card);
+
 }
 
 Card Board::drawCommunityChestCard() {
     // Implement logic to draw a Community Chest card (randomly, for example)
-    int index = arc4random() % communityChestCards.size();
-    Card card = communityChestCards[index];
-    communityChestCards.erase(communityChestCards.begin() + index); // Remove drawn card from deck
-    return card;
+    Card drawnCard = communityChestCards.front();
+    communityChestCards.pop();  // Remove the card from the queue
+    return drawnCard;  // Return the drawn card
+
+}
+void Board::pushCommunityChestCard(Card& card) {
+    communityChestCards.push(card);
+
 }
 
 bool Board::ownTheCity(Property* currentProperty, int ownerId){

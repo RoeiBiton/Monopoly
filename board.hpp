@@ -3,14 +3,15 @@
 #define BOARD_HPP
 
 #include <vector>
+#include <queue>
 #include "property.hpp"
 #include "card.hpp"
 
 class Board {
 private:
     std::vector<Property> properties;           // All properties on the board
-    std::vector<Card> chanceCards;              // Chance cards
-    std::vector<Card> communityChestCards;      // Community Chest cards
+    std::queue<Card> chanceCards;            // Chance cards
+    std::queue<Card>  communityChestCards;      // Community Chest cards
 
 public:
     Board(); // Constructor
@@ -20,6 +21,8 @@ public:
     Card drawCommunityChestCard();                // Draw a Community Chest card
     bool ownTheCity(Property* currentProperty, int ownerId);
     bool sameOrLessAmountOfHouses(Property* currentProperty);
+    void pushChanceCard(Card& card);
+    void pushCommunityChestCard(Card& card);
 };
 
 #endif // BOARD_HPP

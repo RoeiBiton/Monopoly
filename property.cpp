@@ -42,6 +42,10 @@ std::string Property::getStreet() const {
     return street;
 }
 
+std::string Property::getName() const {
+    return (city + " " +street);
+}
+
 int Property::getRent() const {
     return rent;
 }
@@ -77,6 +81,7 @@ std::string Property::getColor() const {
 void Property::resetProperty(){
     this->houseAmount=0;
     this->updateRent();
+    this->updateTrainRent(getOwner(), getOwner());
     this->setOwner(-1);
 }
 
@@ -102,16 +107,22 @@ void Property::updateRent(){
         switch(this->getId()){
         case 0: case 1: case 2: case 3: case 5: case 6: case 7: case 13: case 14: case 15: case 16: case 17: case 18: case 19: case 21:
             this->setRent(this->getRent()*3);
+            break;
         case 4:
             this->setRent(100);
+            break;
         case 8: case 9:
             this->setRent(200);
+            break;
         case 10:
             this->setRent(220);
+            break;
         case 11: case 12:
             this->setRent(250);
+            break;
         case 20:
             this->setRent(500);
+            break;
         }
 
     }
@@ -119,28 +130,40 @@ void Property::updateRent(){
         switch(this->getId()){
         case 0: case 1: case 2: case 3: case 4: case 5: case 6:
             this->setRent(this->getRent()*3);
+            break;
         case 7:
             this->setRent(500);
+            break;
         case 8: case 9:
             this->setRent(550);
+            break;
         case 10:
             this->setRent(600);
+            break;
         case 11: case 12:
             this->setRent(700);
+            break;
         case 13:
             this->setRent(750);
+            break;
         case 14: case 15:
             this->setRent(800);
+            break;
         case 16:
             this->setRent(850);
+            break;
         case 17: case 18:
             this->setRent(900);
+            break;
         case 19:
             this->setRent(1000);
+            break;
         case 20:
             this->setRent(1100);
+            break;
         case 21:
             this->setRent(1400);
+            break;
 
         }
     }
@@ -148,36 +171,52 @@ void Property::updateRent(){
         switch(this->getId()){
         case 0:
             this->setRent(160);
+            break;
         case 1:
             this->setRent(320);
+            break;
         case 2: case 3:
             this->setRent(400);
+            break;
         case 4:
             this->setRent(450);
+            break;
         case 5: case 6:
             this->setRent(625);
+            break;
         case 7:
             this->setRent(700);
+            break;
         case 8: case 9:
             this->setRent(700);
+            break;
         case 10:
             this->setRent(800);
+            break;
         case 11: case 12:
             this->setRent(875);
+            break;
         case 13:
             this->setRent(925);
+            break;
         case 14: case 15:
             this->setRent(975);
+            break;
         case 16:
             this->setRent(1025);
+            break;
         case 17: case 18:
             this->setRent(1100);
+            break;
         case 19:
             this->setRent(1200);
+            break;
         case 20:
             this->setRent(1300);
+            break;
         case 21:
             this->setRent(1700);
+            break;
 
         }
     }
@@ -220,6 +259,32 @@ void Property::updateRent(){
 
         }
     }
-
-
 }
+    void Property::updateTrainRent(int playerId, int trainCounter){
+
+        switch(trainCounter){
+        case 1:
+            if(this->getOwner()==playerId){
+                this->setRent(25);
+            }
+            break;
+        case 2:
+            if(this->getOwner()==playerId){
+                this->setRent(50);
+            }
+            break;
+        case 3:
+            if(this->getOwner()==playerId){
+                this->setRent(100);
+            }
+            break;
+        case 4:
+            if(this->getOwner()==playerId){
+                this->setRent(200);
+            }
+            break;
+        }
+
+    }
+
+

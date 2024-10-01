@@ -34,6 +34,9 @@ void Player::decTrainCounter(){
 void Player::setFreeParked(bool ans){
     isFreeParked=ans;
 }
+void Player::setJailCard(bool ans){
+    exitJailCard=ans;
+}
 
 // Getters
 std::string Player::getName() const {

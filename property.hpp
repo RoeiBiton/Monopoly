@@ -31,6 +31,7 @@ public:
     int getId() const;
     std::string getCity() const;
     std::string getStreet() const;
+    std::string getName() const ;
     int getRent() const;
     int getOriginalRent() const;
     int getPropertyPrice() const;
@@ -41,7 +42,9 @@ public:
     int getHouseAmount() const;
     std::string getColor() const;
     void updateRent();
+    void updateTrainRent(int playerId, int trainCounter);
     void resetProperty();
+
 
 };
 

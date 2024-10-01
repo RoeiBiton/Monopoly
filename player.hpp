@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+
 class Player {
 private:
     std::string name;                   // Player's name
@@ -32,6 +33,7 @@ public:
     void incTrainCounter();
     void decTrainCounter();
     void setFreeParked(bool ans);
+    void setJailCard(bool ans);
 
 
     // Getters

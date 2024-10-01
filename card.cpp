@@ -1,8 +1,8 @@
 #include "card.hpp"
 
 // Constructor
-Card::Card(int cardId, const std::string& desc, int val)
-    : id(cardId), description(desc), value(val), isDrawn(false) {}
+Card::Card(int cardId, const std::string& desc, int val, char type)
+    : id(cardId), description(desc), value(val), cardType(type) {}
 
 // Getters
 int Card::getId() const {
@@ -13,15 +13,13 @@ std::string Card::getDescription() const {
     return description;
 }
 
+char Card::getType() const {
+    return cardType;
+}
+
 int Card::getValue() const {
     return value;
 }
 
-bool Card::getIsDrawn() const {
-    return isDrawn;
-}
 
-// Setters
-void Card::setDrawn(bool drawn) {
-    isDrawn = drawn;
-}
+
