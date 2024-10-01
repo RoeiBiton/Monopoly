@@ -8,7 +8,6 @@ class Player {
 private:
     std::string name;                   // Player's name
     int id;                             // Player's ID
-    int logo;                           // Logo identifier
     int moneyBalance;                   // Player's money balance
     std::vector<int> ownedProperties;   // Vector of owned property IDs
     int placeOnBoard;                   // Player's current position on the board
@@ -23,7 +22,7 @@ private:
 
 public:
     // Constructor
-    Player(const std::string& playerName, int playerId, int playerLogo);
+    Player(const std::string& playerName, int playerId);
 
     // Setters
     void setName(const std::string& playerName);     // Set the player's name
@@ -43,7 +42,6 @@ public:
     // Getters
     std::string getName() const;                      // Get the player's name
     int getId() const;                                // Get the player's ID
-    int getLogo() const;                              // Get the player's logo identifier
     int getMoneyBalance() const;                      // Get the player's money balance
     int getPlaceOnBoard() const;                      // Get the player's position on the board
     int getJailTurn() const;                          // Get the number of turns the player has been in jail

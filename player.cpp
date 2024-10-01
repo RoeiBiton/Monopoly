@@ -18,8 +18,8 @@
  * @param playerId The unique identifier for the player.
  * @param playerLogo The logo associated with the player.
  */
-Player::Player(const std::string& playerName, int playerId, int playerLogo)
-    : name(playerName), id(playerId), logo(playerLogo),
+Player::Player(const std::string& playerName, int playerId)
+    : name(playerName), id(playerId),
     moneyBalance(1500), placeOnBoard(0), doubleCounter(0), jailTurn(0), myTurn(false),
     exitJailCard(false), isPrisoner(false), isFreeParked(false), isActive(true), trainCounter(0) {}
 
@@ -116,15 +116,6 @@ std::string Player::getName() const {
  */
 int Player::getId() const {
     return id;
-}
-
-/**
- * @brief Gets the player's logo.
- *
- * @return The player's logo.
- */
-int Player::getLogo() const {
-    return logo;
 }
 
 /**

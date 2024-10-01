@@ -30,6 +30,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         card.hpp card.cpp
         dice.hpp dice.cpp
         game.hpp game.cpp
+        Test.cpp
+        Makefile
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Monopoly APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

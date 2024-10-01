@@ -1,0 +1,9 @@
+/Users/roeibiton/QtProjects/Monopoly/build/Qt_6_5_3_for_macOS-Debug/CMakeFiles/Monopoly.dir
+/Users/roeibiton/QtProjects/Monopoly/build/Qt_6_5_3_for_macOS-Debug/CMakeFiles/edit_cache.dir
+/Users/roeibiton/QtProjects/Monopoly/build/Qt_6_5_3_for_macOS-Debug/CMakeFiles/rebuild_cache.dir
+/Users/roeibiton/QtProjects/Monopoly/build/Qt_6_5_3_for_macOS-Debug/CMakeFiles/list_install_components.dir
+/Users/roeibiton/QtProjects/Monopoly/build/Qt_6_5_3_for_macOS-Debug/CMakeFiles/install.dir
+/Users/roeibiton/QtProjects/Monopoly/build/Qt_6_5_3_for_macOS-Debug/CMakeFiles/install/local.dir
+/Users/roeibiton/QtProjects/Monopoly/build/Qt_6_5_3_for_macOS-Debug/CMakeFiles/install/strip.dir
+/Users/roeibiton/QtProjects/Monopoly/build/Qt_6_5_3_for_macOS-Debug/CMakeFiles/Monopoly_autogen_timestamp_deps.dir
+/Users/roeibiton/QtProjects/Monopoly/build/Qt_6_5_3_for_macOS-Debug/CMakeFiles/Monopoly_autogen.dir

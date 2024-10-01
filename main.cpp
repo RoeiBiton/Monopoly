@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
                                                    "Enter name for Player " + QString::number(i + 1) + ":",
                                                    QLineEdit::Normal, "", &ok);
         if (ok && !playerName.isEmpty()) {
-            players.emplace_back(playerName.toStdString(), i, 0); // Use i for player ID and 0 as a placeholder for logo
+            players.emplace_back(playerName.toStdString(), i); // Use i for player ID and 0 as a placeholder for logo
         } else {
             QMessageBox::warning(nullptr, "Invalid Input", "You must enter a valid name.");
             return 1; // Exit if the input is invalid
