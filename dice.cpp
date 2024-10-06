@@ -2,6 +2,7 @@
  * Created by Roei Biton
  * Gmail: roei.biton33@gmail.com
  * */
+
 #include "dice.hpp"
 #include <cstdlib>
 
