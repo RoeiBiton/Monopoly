@@ -1,3 +1,8 @@
+/**
+ * Created by Roei Biton
+ * Gmail: roei.biton33@gmail.com
+ * */
+
 #include "game.hpp"
 #include <QMessageBox>
 #include <QString>
@@ -479,9 +484,9 @@ void Game::handlePropertyDevelopement(Player& player, Property* property, int ne
                 }
             }
         }else if(!board.ownTheCity(property, player.getId())){
-            GUIShowMessage("You must own all the city first !");
-        }else if(board.sameOrLessAmountOfHouses(property)){
-            GUIShowMessage("You must have a same or less amount of houses than the rest of the city streets !");
+            GUIShowMessage("If you want to buy a house you must own all the city first !");
+        }else if(!board.sameOrLessAmountOfHouses(property)){
+            GUIShowMessage("If you want to buy a house you must have a same or less amount of houses than the rest of the city streets !");
         }
     } else{
         GUIShowMessage("You can build houses only in streets !");
@@ -779,7 +784,8 @@ void Game::buildHouseOnProperty(Player& player) {
 
     if (reply == QMessageBox::Yes) {
 
-
+        QMessageBox::StandardButton reply2 = QMessageBox::Yes;
+        while(reply2 == QMessageBox::Yes){
     QStringList propertiesToBuild; // List to store property names for dialog
     std::vector<int> ownedProperties = player.getOwnedProperties();
 
@@ -811,6 +817,14 @@ void Game::buildHouseOnProperty(Player& player) {
                 break; // Exit loop after finding and building the house
             }
         }
+    }
+
+    reply2 = QMessageBox::question(nullptr, "Buy More?",
+                                  QString("%1 Do you want to buy another house?")
+                                      .arg(QString::fromStdString(player.getName())),
+                                  QMessageBox::Yes | QMessageBox::No);
+
+
     }
     }
 }

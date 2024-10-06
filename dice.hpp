@@ -1,3 +1,8 @@
+/**
+ * Created by Roei Biton
+ * Gmail: roei.biton33@gmail.com
+ * */
+
 #ifndef DICE_HPP
 #define DICE_HPP
 

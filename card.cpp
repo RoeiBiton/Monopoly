@@ -1,3 +1,7 @@
+/**
+ * Created by Roei Biton
+ * Gmail: roei.biton33@gmail.com
+ * */
 #include "card.hpp"
 
 // Constructor

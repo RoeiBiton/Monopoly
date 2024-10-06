@@ -1,4 +1,8 @@
-// Board.hpp
+/**
+ * Created by Roei Biton
+ * Gmail: roei.biton33@gmail.com
+ * */
+
 #ifndef BOARD_HPP
 #define BOARD_HPP
 

@@ -1,4 +1,13 @@
 /**
+ * Created by Roei Biton
+ * Gmail: roei.biton33@gmail.com
+ * */
+
+
+
+#include "player.hpp"
+#include <algorithm>
+/**
 
  * @brief Contains the Player class, representing each player in the Monopoly game.
  *
@@ -7,8 +16,6 @@
  * game states such as jail status and turn management.
  */
 
-#include "player.hpp"
-#include <algorithm>
 
 // Constructor
 /**

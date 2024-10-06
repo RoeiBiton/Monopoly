@@ -1,3 +1,8 @@
+/**
+ * Created by Roei Biton
+ * Gmail: roei.biton33@gmail.com
+ * */
+
 #ifndef PROPERTY_HPP
 #define PROPERTY_HPP
 

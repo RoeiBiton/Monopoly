@@ -1,3 +1,8 @@
+/**
+ * Created by Roei Biton
+ * Gmail: roei.biton33@gmail.com
+ * */
+
 #include <QApplication>
 #include <QGraphicsView>
 #include <QGraphicsScene>

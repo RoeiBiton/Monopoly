@@ -1,3 +1,8 @@
+/**
+ * Created by Roei Biton
+ * Gmail: roei.biton33@gmail.com
+ * */
+
 #include "board.hpp"
 #include "property.hpp"
 #include "card.hpp"

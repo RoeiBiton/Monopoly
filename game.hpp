@@ -1,3 +1,8 @@
+/**
+ * Created by Roei Biton
+ * Gmail: roei.biton33@gmail.com
+ * */
+
 // Game.hpp
 #ifndef GAME_HPP
 #define GAME_HPP
